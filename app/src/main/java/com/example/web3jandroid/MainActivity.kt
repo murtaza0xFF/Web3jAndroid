@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             .getWallet(walletDir)
     }
 
-    private fun loadCredentials(walletDir: File, path: String): MutableLiveData<Credentials> {
+    private fun loadCredentials(walletDir: File, path: String): LiveData<Credentials> {
         return mainViewModel
             .loadCredentials(walletDir, path)
     }

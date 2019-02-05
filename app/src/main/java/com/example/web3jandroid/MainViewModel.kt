@@ -75,7 +75,7 @@ public class MainViewModel : ViewModel() {
         return walletName
     }
 
-    fun loadCredentials(walletDir: File, fileName: String): MutableLiveData<Credentials> {
+    fun loadCredentials(walletDir: File, fileName: String): LiveData<Credentials> {
         val disposable = walletRepository
             .loadCredentials(walletDir, fileName)
             .subscribe { credentials.value = it }
