@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:id="@+id/request_ether"
+        android:id="@+id/send_ether"
         android:text="Send Ether" />
 
 </RelativeLayout>
