@@ -28,12 +28,13 @@ class MainActivity : AppCompatActivity() {
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         val walletPath = filesDir.absolutePath
         val walletDir = File(walletPath)
-        createWallet(walletDir).observe(this, Observer {
-            loadCredentials(walletDir, it)
-                .observe(this, Observer { it ->
-                    Timber.d(it.address)
-                })
-        })
+        createWallet(walletDir)
+            .observe(this, Observer {
+                loadCredentials(walletDir, it)
+                    .observe(this, Observer { it2 ->
+                        Timber.d(it2.address)
+                    })
+            })
         request_ether.setOnClickListener {
             mainViewModel.sendEther()
         }

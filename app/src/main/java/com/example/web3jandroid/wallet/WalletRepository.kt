@@ -1,4 +1,4 @@
-package com.example.web3jandroid
+package com.example.web3jandroid.wallet
 
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

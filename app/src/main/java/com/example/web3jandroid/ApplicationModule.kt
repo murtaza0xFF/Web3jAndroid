@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
+import com.example.web3jandroid.wallet.WalletRepository
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

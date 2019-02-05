@@ -1,10 +1,11 @@
 package com.example.web3jandroid
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.web3jandroid.wallet.WalletRepository
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -54,9 +55,22 @@ public class MainViewModel : ViewModel() {
 
 
     fun getWallet(walletDir: File): LiveData<String> {
-        val disposable = walletRepository
-            .getWallet(walletDir)
-            .subscribe { walletName.value = it }
+        val disposable = Observable.just(preferences.getString("wallet_name", ""))
+            .concatMap {
+                when {
+                    it.isEmpty() -> {
+                        walletRepository.getWallet(walletDir)
+                            .doOnNext { it1 ->
+                                Timber.d("Saving wallet name to prefs")
+                                preferences.edit().putString("wallet_name", it1).apply()
+                            }
+                    }
+                    else -> Observable.just(it)
+                }
+            }
+            .subscribe {
+                walletName.value = it
+            }
         compositeDisposable.add(disposable)
         return walletName
     }
@@ -70,10 +84,8 @@ public class MainViewModel : ViewModel() {
     }
 
     fun sendEther() {
-        Log.d(
-            this.javaClass.simpleName,
-            "Sending 1 Wei ("
-                    + Convert.fromWei("1", Convert.Unit.ETHER).toPlainString() + " Ether)"
+        Timber.d(
+            "Sending 1 Wei (${Convert.fromWei("1", Convert.Unit.ETHER).toPlainString()} Ether)"
         )
 
         val disposable = Transfer.sendFunds(
@@ -84,12 +96,11 @@ public class MainViewModel : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.d(
-                    this.javaClass.simpleName,
-                    "Transaction complete, view it at https://rinkeby.etherscan.io/tx/" + it.transactionHash
+                Timber.d(
+                    "Transaction complete, view it at https://rinkeby.etherscan.io/tx/${it.transactionHash}"
                 )
             }, {
-                Log.d(this.javaClass.simpleName, it.localizedMessage)
+                Timber.d(it.localizedMessage)
             })
 
         compositeDisposable.add(disposable)
